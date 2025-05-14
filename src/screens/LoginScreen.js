@@ -1,10 +1,22 @@
-import React from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { useState } from 'react';
-
-const windowWidth = Dimensions.get('window').width;
+import React, { useState} from 'react';
+import { View, TextInput, Text, Button, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
 export default function DetailsScreen({ navigation}) {
+    const windowWidth = Dimensions.get('window').width;
+    const [erroLogin, setErroLogin] = useState('');
+    const [erroSenha, setErroSenha] = useState('');
+
+    const validarTexto = (texto, setErro) => {
+        const textoMod = texto.trim();
+        if (texto.length === 0) {
+            setErro('Digite um texto'); // Caso o usuário não tenha digitado nada
+        } else if (textoMod.length !== texto.length || texto.includes(' ')) {
+            setErro('Digite um valor válido (evite espaços extras)'); // Se houver espaços no início ou fim
+        } else {
+            setErro('');
+        }
+    }
+
     return (
         <View style={styles.formContainer}>
             <Text style={styles.title}>Login Screen</Text>
@@ -12,16 +24,18 @@ export default function DetailsScreen({ navigation}) {
                 style={styles.input}
                 placeholder="Login"
                 placeholderTextColor="#999"
+                onChangeText={(texto) => validarTexto(texto, setErroLogin)}
             />
+            {erroLogin ? <Text style={styles.erro}>{erroLogin}</Text> : null} 
             <TextInput
                 style={styles.input}
                 placeholder="Senha"
                 placeholderTextColor="#999"
-                keyboardType="numeric"
+                onChangeText={(texto) => validarTexto(texto, setErroSenha)}
             />
+            {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null} 
             <Button
                 title="Fazer login"
-                onPress={validarLogin()}
             />
         </View>
     );
@@ -41,7 +55,6 @@ const styles = StyleSheet.create({
     buttonContainer: {
         backgroundColor: '#dda0dd',
         margin: 10,
-        width: windowWidth * 0.5,
         borderRadius: 5,
     },
     input: {
