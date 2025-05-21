@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+package-lock.json
+
+# Expo
+.expo/
+.expo-shared/
+
+# IDEs e sistemas operacionais
+.vscode/
+.DS_Store
+
+# Cache do React Native
+npm-debug.log
+yarn-error.log
+
+# Logs e arquivos temporários
+*.log
