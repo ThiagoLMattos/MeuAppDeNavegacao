@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-export default function LoginScreen({ navigation }) {
-    console.log(navigation);
-    console.log('Navigation Object:', navigation);
-    console.log('Navigation Available Screens:', navigation.getState().routeNames);
+export default async function SingupScreen({ navigation }) {
     const [login, setLogin] = useState('');
     const [loginSalvo, setLoginSalvo] = useState('');
     const [senha, setSenha] = useState('');
@@ -25,34 +21,27 @@ export default function LoginScreen({ navigation }) {
         }
     }
 
-    const verificarLogin = async () => {
-        try {
-            const storedUser = await AsyncStorage.getItem('userData');
-            if (!storedUser) {
-                alert('Nenhum usuário encontrado. Por favor, cadastre-se primeiro!');
-                return;
-            }
-
-            const { username, password } = JSON.parse(storedUser);
-
-            if (login === username && senha === password) {
-                alert('Login bem-sucedido!');
-                navigation.navigate('HomeScreen'); // Redirect after successful login
-            } else {
-                alert('Usuário ou senha incorretos!');
-            }
-        } catch (error) {
-            console.error('Erro ao buscar usuário:', error);
+    const cadastrarConta = async () => {
+        if (erroLogin !== '' || erroSenha !== '') {
+            setErrorMessage('Todos os campos devem ser preenchidos!');
+            return;
         }
-    };
-
+    }
+    try {
+        const userData = { login, senha };
+        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+        alert('Cadastro realizado com sucesso!');
+        navigation.navigate('Login'); // Redirect after sign-up
+    } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+    }
     return (
         <View style={styles.formContainer}>
             <Image source={require('../../assets/cloud.png')} style={styles.clouds} />
             <Image source={require('../../assets/hill.png')} style={styles.hill} />
             <Image source={require('../../assets/tree.png')} style={styles.tree} />
             <View style={styles.interactContainer}>
-                <Text style={styles.title}>Login Screen</Text>
+                <Text style={styles.title}>Sign Up Screen</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="Login"
@@ -67,16 +56,13 @@ export default function LoginScreen({ navigation }) {
                     onChangeText={(texto) => validarTexto(texto, setErroSenha)}
                 />
                 {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
-                <TouchableOpacity style={styles.button} onPress={verificarLogin}>
-                    <Text style={styles.buttonText}>Fazer Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                    <Text style={styles.linkText}>Não tem uma conta? Cadastre-se</Text>
+                <TouchableOpacity style={styles.button} onPress={cadastrarConta}>
+                    <Text style={styles.buttonText}>Fazer Cadastro</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
-}
+}   
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -135,11 +121,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    linkText: {
-        color: '#B3E5FC',
-        fontSize: 10,
-        margin: 10,
     },
     tree: {
         position: 'absolute',
