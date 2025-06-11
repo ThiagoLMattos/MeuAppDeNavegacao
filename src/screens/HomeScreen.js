@@ -1,7 +1,14 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const windowWidth = Dimensions.get('window').width;
+
+const deslogar = async () => {
+    await AsyncStorage.removeItem('logado');
+    navigation.navigate('Login'); 
+};
 
 export default function HomeScreen({ navigation }) {
     return (
@@ -11,6 +18,10 @@ export default function HomeScreen({ navigation }) {
                 <Button
                     title="Go to Profile"
                     onPress={() => navigation.navigate('Profile')}
+                />
+                <Button
+                    title="Logout"
+                    onPress={() => deslogar()}
                 />
             </View>
         </View>

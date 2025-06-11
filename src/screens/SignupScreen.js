@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default async function SingupScreen({ navigation }) {
+export default function SingupScreen({ navigation }) {
     const [login, setLogin] = useState('');
     const [loginSalvo, setLoginSalvo] = useState('');
     const [senha, setSenha] = useState('');
@@ -20,21 +20,27 @@ export default async function SingupScreen({ navigation }) {
             setErro('');
         }
     }
-
-    const cadastrarConta = async () => {
-        if (erroLogin !== '' || erroSenha !== '') {
-            setErrorMessage('Todos os campos devem ser preenchidos!');
+    const cadastrarConta = async (login, senha) => {
+        if (login.trim() === '' || senha.trim() === '') {
+            alert('Preencha todos os campos corretamente');
             return;
         }
-    }
-    try {
-        const userData = { login, senha };
-        await AsyncStorage.setItem('userData', JSON.stringify(userData));
-        alert('Cadastro realizado com sucesso!');
-        navigation.navigate('Login'); // Redirect after sign-up
-    } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
-    }
+
+        if (erroLogin === '' || erroSenha === '') {
+            try {
+                await AsyncStorage.setItem('user', JSON.stringify({ login, senha }));
+                alert('Cadastro realizado com sucesso!');
+                console.log(login, senha);
+                navigation.navigate('Login');
+            } catch (error) {
+                console.error('Erro ao salvar os dados', error);
+            }
+        } else {
+            alert('Preencha os campos corretamente')
+        }
+    };
+
+
     return (
         <View style={styles.formContainer}>
             <Image source={require('../../assets/cloud.png')} style={styles.clouds} />
@@ -44,25 +50,36 @@ export default async function SingupScreen({ navigation }) {
                 <Text style={styles.title}>Sign Up Screen</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Login"
+                    placeholder="Insira seu Login"
                     placeholderTextColor="#999"
-                    onChangeText={(texto) => validarTexto(texto, setErroLogin)}
+                    onChangeText={(texto) => {
+                        validarTexto(texto, setErroLogin)
+                        setLogin(texto)
+                    }
+                    }
                 />
                 {erroLogin ? <Text style={styles.erro}>{erroLogin}</Text> : null}
                 <TextInput
                     style={styles.input}
-                    placeholder="Senha"
+                    placeholder="Crie uma senha"
                     placeholderTextColor="#999"
-                    onChangeText={(texto) => validarTexto(texto, setErroSenha)}
+                    onChangeText={(texto) => {
+                        validarTexto(texto, setErroSenha)
+                        setSenha(texto)
+                    }
+                    }
                 />
-                {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
-                <TouchableOpacity style={styles.button} onPress={cadastrarConta}>
+
+                <TouchableOpacity style={styles.button} onPress={() => cadastrarConta(login, senha)}>
                     <Text style={styles.buttonText}>Fazer Cadastro</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <Text style={styles.linkText}>Já tem uma conta? Faça login</Text>
                 </TouchableOpacity>
             </View>
         </View>
     );
-}   
+}
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -121,6 +138,11 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    linkText: {
+        color: '#B3E5FC',
+        fontSize: 10,
+        margin: 10,
     },
     tree: {
         position: 'absolute',

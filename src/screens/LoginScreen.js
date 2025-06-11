@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,41 +8,68 @@ export default function LoginScreen({ navigation }) {
     console.log('Navigation Object:', navigation);
     console.log('Navigation Available Screens:', navigation.getState().routeNames);
     const [login, setLogin] = useState('');
-    const [loginSalvo, setLoginSalvo] = useState('');
+    const [loginInserido, setLoginInserido] = useState('');
     const [senha, setSenha] = useState('');
-    const [senhaSalva, setSenhaSalva] = useState('');
+    const [senhaInserida, setSenhaInserida] = useState('');
     const [erroLogin, setErroLogin] = useState('');
     const [erroSenha, setErroSenha] = useState('');
+
+
+    useEffect(() => {
+        const verificarLogin = async () => {
+            try {
+                const logado = await AsyncStorage.getItem('logado');
+                if (logado === 'true') {
+                    navigation.navigate('Home');
+                }
+            } catch (error) {
+                console.error('Erro ao verificar estado de login', error);
+            }
+        };
+    
+        verificarLogin();
+    }, []);
 
     const validarTexto = (texto, setErro) => {
         const textoMod = texto.trim();
         if (texto.length === 0) {
-            setErro('Não deixe em branco'); // Caso o usuário não tenha digitado nada
+            setErro('Não deixe em branco');
         } else if (textoMod.length !== texto.length || texto.includes(' ')) {
-            setErro('Digite um valor válido (evite espaços extras)'); // Se houver espaços no início ou fim
+            setErro('Digite um valor válido (evite espaços extras)'); 
         } else {
             setErro('');
         }
     }
 
-    const verificarLogin = async () => {
-        try {
-            const storedUser = await AsyncStorage.getItem('userData');
-            if (!storedUser) {
-                alert('Nenhum usuário encontrado. Por favor, cadastre-se primeiro!');
-                return;
-            }
+    const conferirLogin = async (login, senha) => {
+        if (login.trim() === '' || senha.trim() === '') {
+            alert('Preencha todos os campos corretamente');
+            return;
+        }
 
-            const { username, password } = JSON.parse(storedUser);
+        if (erroLogin === '' || erroSenha === '') {
+            console.log(loginInserido, senhaInserida)
+            try {
+                const usuarioSalvo = await AsyncStorage.getItem('user');
+                if (usuarioSalvo) {
+                    const { login, senha } = JSON.parse(usuarioSalvo);
+                    console.log(login, senha);
 
-            if (login === username && senha === password) {
-                alert('Login bem-sucedido!');
-                navigation.navigate('HomeScreen'); // Redirect after successful login
-            } else {
-                alert('Usuário ou senha incorretos!');
+                    if (loginInserido === login && senhaInserida === senha) {
+                        await AsyncStorage.setItem('logado', 'true');
+                        alert('Login bem-sucedido!');
+                        console.log('Usuário autenticado:', login);
+                        navigation.navigate('Home');
+
+                    } else {
+                        alert('Usuário ou senha incorretos!');
+                    }
+                } else {
+                    alert('Nenhum usuário cadastrado.');
+                }
+            } catch (error) {
+                console.error('Erro ao verificar login', error);
             }
-        } catch (error) {
-            console.error('Erro ao buscar usuário:', error);
         }
     };
 
@@ -57,17 +84,25 @@ export default function LoginScreen({ navigation }) {
                     style={styles.input}
                     placeholder="Login"
                     placeholderTextColor="#999"
-                    onChangeText={(texto) => validarTexto(texto, setErroLogin)}
+                    onChangeText={(texto) => {
+                        validarTexto(texto, setErroLogin)
+                        setLoginInserido(texto)
+                    }
+                    }
                 />
                 {erroLogin ? <Text style={styles.erro}>{erroLogin}</Text> : null}
                 <TextInput
                     style={styles.input}
                     placeholder="Senha"
                     placeholderTextColor="#999"
-                    onChangeText={(texto) => validarTexto(texto, setErroSenha)}
+                    onChangeText={(texto) => {
+                        validarTexto(texto, setErroSenha)
+                        setSenhaInserida(texto)
+                    }
+                    }
                 />
                 {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
-                <TouchableOpacity style={styles.button} onPress={verificarLogin}>
+                <TouchableOpacity style={styles.button} onPress={() => conferirLogin(loginInserido, senhaInserida)}>
                     <Text style={styles.buttonText}>Fazer Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
