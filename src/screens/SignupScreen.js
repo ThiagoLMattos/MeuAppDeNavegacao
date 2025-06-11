@@ -21,23 +21,20 @@ export default function SingupScreen({ navigation }) {
         }
     }
     const cadastrarConta = async (login, senha) => {
-        if (login.trim() === '' || senha.trim() === '') {
+        if (login.trim() === '' || senha.trim() === '' || login.includes(' ') || senha.includes(' ')) {
             alert('Preencha todos os campos corretamente');
             return;
         }
 
-        if (erroLogin === '' || erroSenha === '') {
-            try {
-                await AsyncStorage.setItem('user', JSON.stringify({ login, senha }));
-                alert('Cadastro realizado com sucesso!');
-                console.log(login, senha);
-                navigation.navigate('Login');
-            } catch (error) {
-                console.error('Erro ao salvar os dados', error);
-            }
-        } else {
-            alert('Preencha os campos corretamente')
+        try {
+            await AsyncStorage.setItem('user', JSON.stringify({ login, senha }));
+            alert('Cadastro realizado com sucesso!');
+            console.log(login, senha);
+            navigation.navigate('Login');
+        } catch (error) {
+            console.error('Erro ao salvar os dados', error);
         }
+
     };
 
 
@@ -69,6 +66,7 @@ export default function SingupScreen({ navigation }) {
                     }
                     }
                 />
+                {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
 
                 <TouchableOpacity style={styles.button} onPress={() => cadastrarConta(login, senha)}>
                     <Text style={styles.buttonText}>Fazer Cadastro</Text>

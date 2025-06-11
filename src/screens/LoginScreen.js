@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
                 console.error('Erro ao verificar estado de login', error);
             }
         };
-    
+
         verificarLogin();
     }, []);
 
@@ -35,14 +35,14 @@ export default function LoginScreen({ navigation }) {
         if (texto.length === 0) {
             setErro('Não deixe em branco');
         } else if (textoMod.length !== texto.length || texto.includes(' ')) {
-            setErro('Digite um valor válido (evite espaços extras)'); 
+            setErro('Digite um valor válido (evite espaços extras)');
         } else {
             setErro('');
         }
     }
 
     const conferirLogin = async (login, senha) => {
-        if (login.trim() === '' || senha.trim() === '') {
+        if (login.trim() === '' || senha.trim() === '' || login.includes(' ') || senha.includes(' ')) {
             alert('Preencha todos os campos corretamente');
             return;
         }
