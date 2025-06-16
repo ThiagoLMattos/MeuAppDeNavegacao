@@ -7,15 +7,16 @@ export default function DetailsScreen({ navigation}) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Profile Screen</Text>
+            <Text style={styles.texto}>
+                Esta é a tela de perfil 😯.
+            </Text>
             <View style={styles.buttonContainer}>
                 <Button
-                    title="Go to Details"
+                    title="Go to Details ⚙️"
                     onPress={() => navigation.navigate('Details')}
                 />
-            </View>
-            <View style={styles.buttonContainer}>
                 <Button
-                    title="Go Back"
+                    title="Go Back ◀️"
                     onPress={() => navigation.goBack()}
                 />
             </View>
@@ -34,9 +35,15 @@ const styles = StyleSheet.create({
         fontSize: 24,
         marginBottom: 20,
     },
+    texto: {
+        fontSize: 16,
+        marginBottom: 20,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+        color: '#333',
+    },
     buttonContainer: {
         backgroundColor: '#dda0dd',
-        margin: 10,
         width: windowWidth * 0.5,
         borderRadius: 5,
     },

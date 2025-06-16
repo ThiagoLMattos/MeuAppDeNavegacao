@@ -7,9 +7,12 @@ export default function DetailsScreen({ navigation}) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Details Screen</Text>
+            <Text style={styles.texto}>
+                Esta é a tela de detalhes 😉.
+            </Text>
             <View style={styles.buttonContainer}>
                 <Button
-                    title="Go Back"
+                    title="Go Back ◀️"
                     onPress={() => navigation.goBack()}
                 />
             </View>
@@ -27,6 +30,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         marginBottom: 20,
+    },
+    texto: {
+        fontSize: 16,
+        marginBottom: 20,
+        textAlign: 'center',
+        paddingHorizontal: 20,
+        color: '#333',
     },
     buttonContainer: {
         backgroundColor: '#ffebcd',

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import TreeAnimated from '../components/TreeAnimated';
+import CloudAnimated from '../components/CloudAnimated';
 
 export default function SingupScreen({ navigation }) {
     const [login, setLogin] = useState('');
     const [loginSalvo, setLoginSalvo] = useState('');
     const [senha, setSenha] = useState('');
+    const [visivel, setvisivel] = useState(false);
     const [senhaSalva, setSenhaSalva] = useState('');
     const [erroLogin, setErroLogin] = useState('');
     const [erroSenha, setErroSenha] = useState('');
@@ -40,9 +43,9 @@ export default function SingupScreen({ navigation }) {
 
     return (
         <View style={styles.formContainer}>
-            <Image source={require('../../assets/cloud.png')} style={styles.clouds} />
+            <CloudAnimated style={styles.clouds} />
             <Image source={require('../../assets/hill.png')} style={styles.hill} />
-            <Image source={require('../../assets/tree.png')} style={styles.tree} />
+            <TreeAnimated style={styles.tree} />
             <View style={styles.interactContainer}>
                 <Text style={styles.title}>Sign Up Screen</Text>
                 <TextInput
@@ -60,12 +63,16 @@ export default function SingupScreen({ navigation }) {
                     style={styles.input}
                     placeholder="Crie uma senha"
                     placeholderTextColor="#999"
+                    secureTextEntry={!visivel}
                     onChangeText={(texto) => {
                         validarTexto(texto, setErroSenha)
                         setSenha(texto)
                     }
                     }
                 />
+                <TouchableOpacity onPress={() => setvisivel(!visivel)} style={styles.visibilityButton}>
+                    <Text>{visivel ? '🙈' : '👁️'}</Text>
+                </TouchableOpacity>
                 {erroSenha ? <Text style={styles.erro}>{erroSenha}</Text> : null}
 
                 <TouchableOpacity style={styles.button} onPress={() => cadastrarConta(login, senha)}>
@@ -94,7 +101,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',  // This brings content back to center
+        alignItems: 'center',  
     },
     interactContainer: {
         width: windowWidth * 0.55,
@@ -125,6 +132,14 @@ const styles = StyleSheet.create({
         minwidth: '100%',
         color: '#333',
     },
+    visibilityButton: {
+        position: 'absolute',
+        right: 15,
+        top: 135,
+        padding: 8,
+        backgroundColor: '#FAFAFA',
+        borderRadius: 20,
+    },
     button: {
         backgroundColor: '#82C79F',
         padding: 14,
@@ -146,8 +161,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 15,
         right: 175,
-        width: 250,  // Aumentando a largura
-        height: 300,  // Aumentando a altura
+        width: 250,  
+        height: 300,  
         resizeMode: 'stretch',
     },
     hill: {
@@ -155,7 +170,7 @@ const styles = StyleSheet.create({
         left: 3,
         top: 295,
         width: windowWidth,
-        height: 600,  // Aumentando a altura
+        height: 600,  
         resizeMode: 'stretch',
     },
     clouds: {
