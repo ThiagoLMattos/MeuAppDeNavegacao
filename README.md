@@ -24,6 +24,8 @@
 
   • Validação dos campos de entrada
 
+  • Personalização com Animate
+
 ---
 
 ## ⚙️ Como instalar e executar
